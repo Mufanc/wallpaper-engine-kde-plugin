@@ -39,6 +39,7 @@ target_link_libraries(${PROJECT_NAME}
 
 if(BUILD_QML)
     find_package(Qt5 COMPONENTS Qml REQUIRED)
+    pkg_check_modules(GTK3 REQUIRED gtk+-3.0)
 
     set(CMAKE_AUTOMOC ON) 
     set(CMAKE_AUTORCC ON) 
@@ -56,4 +57,15 @@ if(BUILD_QML)
     set(CMAKE_AUTOMOC OFF) 
     set(CMAKE_AUTORCC OFF) 
     set(CMAKE_AUTOUIC OFF)
+
+    add_executable(${PROJECT_NAME}-wrapper
+        wrapper.cpp
+    )
+    target_include_directories(${PROJECT_NAME}-wrapper
+        PUBLIC
+        ${GTK3_INCLUDE_DIRS}
+    )
+    target_link_libraries(${PROJECT_NAME}-wrapper
+        ${GTK3_LIBRARIES}
+    )
 endif()

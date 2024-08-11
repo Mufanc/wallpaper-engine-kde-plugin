@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include "arg.hpp"
+#include <signal.h>
 
 int main(int argc, char** argv) {
     argparse::ArgumentParser program("scene-viewer");
@@ -32,6 +33,19 @@ int main(int argc, char** argv) {
     sv->setProperty("fps", program.get<int32_t>(OPT_FPS));
     sv->setAcceptMouse(true);
     sv->setAcceptHover(true);
+
+    char *fd_str = getenv("PIPE_FD");
+    if (fd_str != nullptr) {
+        int fd = static_cast<int>(strtol(fd_str, nullptr, 10));
+        unsigned long window_id = view.winId();
+
+        write(fd, &window_id, sizeof(window_id));
+        close(fd);
+
+        raise(SIGSTOP);
+    }
+
+    std::cout << "show view..." << std::endl;
 
     view.show();
     return QGuiApplication::exec();
