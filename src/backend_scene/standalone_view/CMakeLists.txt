@@ -57,15 +57,4 @@ if(BUILD_QML)
     set(CMAKE_AUTOMOC OFF) 
     set(CMAKE_AUTORCC OFF) 
     set(CMAKE_AUTOUIC OFF)
-
-    add_executable(${PROJECT_NAME}-wrapper
-        wrapper.cpp
-    )
-    target_include_directories(${PROJECT_NAME}-wrapper
-        PUBLIC
-        ${GTK3_INCLUDE_DIRS}
-    )
-    target_link_libraries(${PROJECT_NAME}-wrapper
-        ${GTK3_LIBRARIES}
-    )
 endif()

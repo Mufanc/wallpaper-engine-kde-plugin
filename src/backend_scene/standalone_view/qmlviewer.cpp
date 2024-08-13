@@ -5,7 +5,10 @@
 #include <iostream>
 #include <string>
 #include "arg.hpp"
+
 #include <signal.h>
+#include <unistd.h>
+#include <sys/socket.h>
 
 int main(int argc, char** argv) {
     argparse::ArgumentParser program("scene-viewer");
@@ -34,18 +37,18 @@ int main(int argc, char** argv) {
     sv->setAcceptMouse(true);
     sv->setAcceptHover(true);
 
-    char *fd_str = getenv("PIPE_FD");
+    char *fd_str = getenv("SOCKET_FD");
     if (fd_str != nullptr) {
         int fd = static_cast<int>(strtol(fd_str, nullptr, 10));
-        unsigned long window_id = view.winId();
+        uint64_t window_id = view.winId();
 
-        write(fd, &window_id, sizeof(window_id));
+        send(fd, &window_id, sizeof(window_id), 0);
+        recv(fd, &window_id, sizeof(window_id), 0);
+
         close(fd);
 
-        raise(SIGSTOP);
+        std::cout << "show view..." << std::endl;
     }
-
-    std::cout << "show view..." << std::endl;
 
     view.show();
     return QGuiApplication::exec();
